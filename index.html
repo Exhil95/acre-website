@@ -40,16 +40,14 @@
       height:76px;display:flex;align-items:center;justify-content:space-between;gap:28px
     }
     .brand{display:flex;align-items:center;gap:12px;font-weight:750;letter-spacing:.20em}
-    .mark{
-      width:34px;height:34px;position:relative;display:inline-grid;place-items:center
+    /* Original PNG, unchanged. Trim transparent margins through layout only. */
+    .logo-frame{position:relative;display:block;overflow:hidden;aspect-ratio:921 / 962;flex-shrink:0}
+    .logo-frame img{
+      position:absolute;width:136.1564%;max-width:none;height:auto;
+      left:-16.9381%;top:-5.5094%;
+      filter:brightness(0) invert(1);opacity:.94
     }
-    .mark:before,.mark:after{
-      content:"";position:absolute;border:2px solid var(--text);border-left-color:transparent;
-      border-radius:50%;transform:rotate(-20deg)
-    }
-    .mark:before{width:30px;height:16px}
-    .mark:after{width:20px;height:28px;border-color:var(--accent);border-right-color:transparent;opacity:.95}
-    .mark i{width:6px;height:6px;background:var(--accent);border-radius:50%}
+    .brand .logo-frame{width:46px}
     .navlinks{display:flex;gap:26px;color:#c6cbd1;font-size:14px}
     .navlinks a:hover{color:white}
     .btn{
@@ -81,17 +79,7 @@
       margin-top:58px;padding-top:20px;border-top:1px solid var(--line);
       display:flex;gap:22px;flex-wrap:wrap;color:#7e8790;font-size:11px;font-weight:700;letter-spacing:.18em
     }
-    .orbital{
-      aspect-ratio:1;position:relative;display:grid;place-items:center;opacity:.85
-    }
-    .orbital .core{width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 42px rgba(196,122,69,.4)}
-    .orbit{
-      position:absolute;border:1px solid #444c55;border-radius:50%;
-      transform:rotate(-18deg)
-    }
-    .orbit.a{width:78%;height:31%}
-    .orbit.b{width:53%;height:72%;border-color:#6e482f;transform:rotate(26deg)}
-    .orbit.c{width:96%;height:54%;border-right-color:transparent;border-left-color:transparent}
+    .hero-logo{width:100%;max-width:350px;justify-self:center}
     section{padding:96px 0}
     .section-head{display:flex;justify-content:space-between;gap:40px;align-items:end;margin-bottom:42px}
     .kicker{font-size:11px;color:var(--accent2);letter-spacing:.18em;text-transform:uppercase;font-weight:800}
@@ -115,7 +103,7 @@
       .navlinks{display:none}
       .hero{min-height:auto}
       .hero-grid{grid-template-columns:1fr}
-      .orbital{display:none}
+      .hero-logo{display:none}
       .cards{grid-template-columns:1fr}
       .section-head{display:block}
       .section-copy{margin-top:20px}
@@ -128,7 +116,7 @@
   <div class="wrap">
     <nav>
       <a class="brand" href="#">
-        <span class="mark"><i></i></span>
+        <span class="logo-frame"><img src="assets/acre-logo.png" alt="" width="1254" height="1254"></span>
         <span>ACRE</span>
       </a>
       <div class="navlinks">
@@ -158,9 +146,8 @@
           <span>DRUK 3D</span><span>LASER</span><span>PROJEKTOWANIE</span><span>KRÓTKIE SERIE</span>
         </div>
       </div>
-      <div class="orbital" aria-hidden="true">
-        <div class="orbit a"></div><div class="orbit b"></div><div class="orbit c"></div>
-        <div class="core"></div>
+      <div class="hero-logo logo-frame">
+        <img src="assets/acre-logo.png" alt="Logo ACRE" width="1254" height="1254">
       </div>
     </div>
   </section>
