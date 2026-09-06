@@ -10,8 +10,8 @@
   .navlinks a:hover:after{right:0}
   .acre-progress{position:fixed;z-index:100;left:0;top:0;width:100%;height:2px;pointer-events:none;background:transparent}
   .acre-progress span{display:block;width:100%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transform-origin:0 50%;transform:scaleX(0)}
-  .reveal{opacity:0;transform:translate3d(0,26px,0);filter:blur(3px);transition:opacity .75s var(--motion),transform .75s var(--motion),filter .75s var(--motion);transition-delay:var(--reveal-delay,0ms)}
-  .reveal.visible{opacity:1;transform:none;filter:none}
+  .motion-ready .reveal{opacity:0;transform:translate3d(0,26px,0);filter:blur(3px);transition:opacity .75s var(--motion),transform .75s var(--motion),filter .75s var(--motion);transition-delay:var(--reveal-delay,0ms)}
+  .motion-ready .reveal.visible{opacity:1;transform:none;filter:none}
   .hero .eyebrow,.hero h1,.hero .lead,.hero .sublead,.hero .actions,.hero .techline,.page-hero .kicker,.page-hero h1,.page-hero> .wrap>p,.page-hero .actions{opacity:0;transform:translate3d(0,20px,0);animation:acreIntro .82s var(--motion) forwards}
   .hero h1,.page-hero h1{animation-delay:.07s}.hero .lead,.page-hero> .wrap>p{animation-delay:.14s}.hero .sublead{animation-delay:.20s}.hero .actions,.page-hero .actions{animation-delay:.27s}.hero .techline{animation-delay:.36s}
   @keyframes acreIntro{to{opacity:1;transform:none}}
@@ -38,9 +38,23 @@
   .faq details[open] p{animation:faqIn .35s var(--motion)}
   @keyframes faqIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
   @media(max-width:900px){.hero-logo{animation:none}.card,.passion-card,.tech-detail-card,.feature-item,.b2b-point,.step{transform:none!important}}
-  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.reveal,.reveal.visible,.hero .eyebrow,.hero h1,.hero .lead,.hero .sublead,.hero .actions,.hero .techline,.page-hero .kicker,.page-hero h1,.page-hero> .wrap>p,.page-hero .actions{opacity:1!important;transform:none!important;filter:none!important;animation:none!important;transition:none!important}.hero-logo,.hero-logo:before{animation:none!important}.equipment-media img,.tech-gallery-card img{transform:none!important}.acre-progress{display:none!important}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.motion-ready .reveal,.motion-ready .reveal.visible,.hero .eyebrow,.hero h1,.hero .lead,.hero .sublead,.hero .actions,.hero .techline,.page-hero .kicker,.page-hero h1,.page-hero> .wrap>p,.page-hero .actions{opacity:1!important;transform:none!important;filter:none!important;animation:none!important;transition:none!important}.hero-logo,.hero-logo:before{animation:none!important}.equipment-media img,.tech-gallery-card img{transform:none!important}.acre-progress{display:none!important}}
   `;
   const style=document.createElement('style');style.id='acre-motion';style.textContent=css;document.head.appendChild(style);
+
+  const main=document.querySelector('main');
+  if(main){
+    if(!main.id)main.id='main-content';
+    if(!document.querySelector('.skip-link')){
+      const skip=document.createElement('a');
+      skip.className='skip-link';
+      skip.href=`#${main.id}`;
+      skip.textContent='Przejdź do treści';
+      document.body.prepend(skip);
+    }
+  }
+
+  if(!reduced)document.body.classList.add('motion-ready');
 
   const menuButton=document.querySelector('.menu-toggle');
   const navLinks=document.querySelector('.navlinks');
@@ -66,7 +80,7 @@
   }
 
   const header=document.querySelector('.site-header');
-  const progress=document.createElement('div');progress.className='acre-progress';progress.innerHTML='<span></span>';document.body.appendChild(progress);
+  const progress=document.createElement('div');progress.className='acre-progress';progress.setAttribute('aria-hidden','true');progress.innerHTML='<span></span>';document.body.appendChild(progress);
   const progressBar=progress.firstElementChild;
   let scrollTick=false;
   const parallaxImages=[...document.querySelectorAll('.equipment-media img,.tech-gallery-card img')];
