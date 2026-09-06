@@ -11,6 +11,20 @@
   .navlinks a:hover:after,.navlinks a.is-active:after{right:0}
   .navlinks a.is-active{color:var(--text)}
   .footer-links a.is-active{color:var(--text)}
+  .footer-nav-groups{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:36px;padding:30px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:26px}
+  .footer-group{display:flex;flex-direction:column;gap:14px}
+  .footer-group>strong{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--text);font-weight:700}
+  .footer-group .footer-links{display:flex;flex-wrap:wrap;gap:10px 18px;margin:0}
+  .footer-group .footer-links a{font-size:13px}
+  .footer-bottom{display:flex;justify-content:space-between;gap:20px;padding-top:20px;color:var(--muted);font-size:12px}
+  .acre-cookie-banner{position:fixed;z-index:120;left:18px;right:18px;bottom:18px;max-width:1180px;margin:0 auto;background:rgba(17,20,24,.98);border:1px solid rgba(224,160,110,.24);box-shadow:0 20px 60px rgba(0,0,0,.42);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:18px 20px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px;align-items:center;transform:translateY(16px);opacity:0;animation:cookieIn .35s var(--motion) forwards}
+  .acre-cookie-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .acre-cookie-copy strong{font-size:14px;color:var(--text)}
+  .acre-cookie-copy p{margin:0;color:var(--muted);font-size:13px;line-height:1.55;max-width:880px}
+  .acre-cookie-copy a{color:var(--accent2);text-decoration:none}
+  .acre-cookie-actions{display:flex;align-items:center;gap:10px}
+  .acre-cookie-actions .btn{min-width:110px}
+  @keyframes cookieIn{to{opacity:1;transform:none}}
   .acre-progress{position:fixed;z-index:100;left:0;top:0;width:100%;height:2px;pointer-events:none;background:transparent}
   .acre-progress span{display:block;width:100%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transform-origin:0 50%;transform:scaleX(0)}
   .motion-ready .reveal{opacity:0;transform:translate3d(0,26px,0);filter:blur(3px);transition:opacity .75s var(--motion),transform .75s var(--motion),filter .75s var(--motion);transition-delay:var(--reveal-delay,0ms)}
@@ -41,8 +55,8 @@
   .faq details[open] p{animation:faqIn .35s var(--motion)}
   @keyframes faqIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
   @media(min-width:901px) and (max-width:1120px){.navlinks{gap:16px}.navlinks a{font-size:13px}.brand{gap:9px}.brand .logo-frame{width:42px}.nav-actions{gap:8px}.desktop-cta{padding:0 16px}}
-  @media(max-width:900px){.hero-logo{animation:none}.card,.passion-card,.tech-detail-card,.feature-item,.b2b-point,.step{transform:none!important}.navlinks a.is-active{color:var(--accent2)}}
-  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.motion-ready .reveal,.motion-ready .reveal.visible,.hero .eyebrow,.hero h1,.hero .lead,.hero .sublead,.hero .actions,.hero .techline,.page-hero .kicker,.page-hero h1,.page-hero> .wrap>p,.page-hero .actions{opacity:1!important;transform:none!important;filter:none!important;animation:none!important;transition:none!important}.hero-logo,.hero-logo:before{animation:none!important}.equipment-media img,.tech-gallery-card img{transform:none!important}.acre-progress{display:none!important}}
+  @media(max-width:900px){.hero-logo{animation:none}.card,.passion-card,.tech-detail-card,.feature-item,.b2b-point,.step{transform:none!important}.navlinks a.is-active{color:var(--accent2)}.footer-nav-groups{grid-template-columns:1fr;gap:24px}.footer-bottom{flex-direction:column;gap:6px}.acre-cookie-banner{left:10px;right:10px;bottom:10px;grid-template-columns:1fr;gap:14px;padding:16px}.acre-cookie-actions{justify-content:flex-start}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.motion-ready .reveal,.motion-ready .reveal.visible,.hero .eyebrow,.hero h1,.hero .lead,.hero .sublead,.hero .actions,.hero .techline,.page-hero .kicker,.page-hero h1,.page-hero> .wrap>p,.page-hero .actions{opacity:1!important;transform:none!important;filter:none!important;animation:none!important;transition:none!important}.hero-logo,.hero-logo:before{animation:none!important}.equipment-media img,.tech-gallery-card img{transform:none!important}.acre-progress{display:none!important}.acre-cookie-banner{animation:none!important;opacity:1!important;transform:none!important}}
   `;
   const style=document.createElement('style');style.id='acre-motion';style.textContent=css;document.head.appendChild(style);
 
@@ -121,27 +135,70 @@
 
   const footer=document.querySelector('footer .wrap');
   if(footer){
-    let footerLinks=footer.querySelector('.footer-links');
-    if(!footerLinks){
-      footerLinks=document.createElement('nav');
-      footerLinks.className='footer-links';
-      footerLinks.setAttribute('aria-label','Nawigacja stopki');
-      footer.appendChild(footerLinks);
-    }
-    footerLinks.innerHTML=`
-      <a href="/">Strona główna</a>
-      <a href="/druk-3d-na-zamowienie.html">Druk 3D</a>
-      <a href="/grawerowanie-ciecie-laserowe.html">Laser</a>
-      <a href="/projektowanie-cad.html">CAD</a>
-      <a href="/dla-firm.html">Dla firm</a>
-      <a href="/druk-3d-dla-hobbystow.html">Hobby / DIY</a>
-      <a href="/akcesoria-astronomiczne.html">ACRE / ASTRO</a>
-      <a href="/technologia.html">Technologia</a>
-      <a href="/wycena.html">Wycena</a>
-      <a href="/polityka-prywatnosci.html">Prywatność</a>`;
-    footerLinks.querySelectorAll('a').forEach(link=>{
-      const href=link.getAttribute('href');
+    const year=new Date().getFullYear();
+    footer.innerHTML=`
+      <div class="footer-grid">
+        <span>ACRE / digital fabrication</span>
+        <span><a href="mailto:kontakt@acreworks.pl">kontakt@acreworks.pl</a> / InPost / cała Polska</span>
+      </div>
+      <div class="footer-nav-groups">
+        <nav class="footer-group" aria-label="Usługi ACRE">
+          <strong>Usługi</strong>
+          <div class="footer-links">
+            <a href="/druk-3d-na-zamowienie.html">Druk 3D</a>
+            <a href="/grawerowanie-ciecie-laserowe.html">Laser</a>
+            <a href="/projektowanie-cad.html">CAD</a>
+            <a href="/dla-firm.html">Dla firm</a>
+          </div>
+        </nav>
+        <nav class="footer-group" aria-label="Specjalizacje ACRE">
+          <strong>Specjalizacje</strong>
+          <div class="footer-links">
+            <a href="/druk-3d-dla-hobbystow.html">Hobby / DIY</a>
+            <a href="/akcesoria-astronomiczne.html">ACRE / ASTRO</a>
+            <a href="/technologia.html">Technologia</a>
+          </div>
+        </nav>
+        <nav class="footer-group" aria-label="Informacje ACRE">
+          <strong>Informacje</strong>
+          <div class="footer-links">
+            <a href="/">Strona główna</a>
+            <a href="/wycena.html">Wycena</a>
+            <a href="/polityka-prywatnosci.html">Polityka prywatności</a>
+            <a href="/polityka-prywatnosci.html#cookies">Pliki cookies</a>
+          </div>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>© ${year} ACRE</span>
+        <span>Druk 3D / laser / CAD / krótkie serie</span>
+      </div>`;
+    footer.querySelectorAll('a').forEach(link=>{
+      const href=link.getAttribute('href')||'';
       if((currentFile==='index.html'&&href==='/')||href.endsWith('/'+currentFile))link.classList.add('is-active');
+    });
+  }
+
+  const cookieKey='acre_cookie_notice_v1';
+  let cookieNoticeSeen=false;
+  try{cookieNoticeSeen=localStorage.getItem(cookieKey)==='1';}catch{}
+  if(!cookieNoticeSeen&&!document.querySelector('.acre-cookie-banner')){
+    const banner=document.createElement('div');
+    banner.className='acre-cookie-banner';
+    banner.setAttribute('role','region');
+    banner.setAttribute('aria-label','Informacja o plikach cookies i prywatności');
+    banner.innerHTML=`
+      <div class="acre-cookie-copy">
+        <strong>Cookies i prywatność</strong>
+        <p>ACRE nie korzysta obecnie z cookies analitycznych ani reklamowych. Używamy wyłącznie technicznego zapisu preferencji, aby zapamiętać zamknięcie tego komunikatu. <a href="/polityka-prywatnosci.html#cookies">Dowiedz się więcej</a>.</p>
+      </div>
+      <div class="acre-cookie-actions">
+        <button class="btn primary" type="button" data-cookie-dismiss>Rozumiem</button>
+      </div>`;
+    document.body.appendChild(banner);
+    banner.querySelector('[data-cookie-dismiss]')?.addEventListener('click',()=>{
+      try{localStorage.setItem(cookieKey,'1');}catch{}
+      banner.remove();
     });
   }
 
