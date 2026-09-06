@@ -1,1 +1,15 @@
-.breadcrumbs{padding:22px 0 0;color:#7f8790;font-size:12px}.breadcrumbs ol{list-style:none;display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0;padding:0}.breadcrumbs li{display:flex;gap:8px;align-items:center}.breadcrumbs li:not(:last-child)::after{content:"/";color:#4f565e}.breadcrumbs a{color:#aeb4ba}.breadcrumbs a:hover{color:var(--text)}.footer-links{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}.footer-links a{color:#9299a1}.footer-links a:hover{color:var(--text)}@media(max-width:560px){.breadcrumbs{padding-top:16px}.footer-links{gap:10px 14px}}
+.breadcrumbs{padding:22px 0 0;color:#8f98a2;font-size:12px}.breadcrumbs ol{list-style:none;display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0;padding:0}.breadcrumbs li{display:flex;gap:8px;align-items:center}.breadcrumbs li:not(:last-child)::after{content:"/";color:#69727b}.breadcrumbs a{color:#bcc2c8}.breadcrumbs a:hover{color:var(--text)}.footer-links{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}.footer-links a{color:#9da5ad}.footer-links a:hover{color:var(--text)}
+
+/* Treść musi pozostać widoczna, nawet jeśli JavaScript się nie załaduje. */
+.reveal{opacity:1;transform:none}
+
+.skip-link{position:fixed;z-index:200;left:16px;top:12px;padding:11px 15px;background:var(--text);color:var(--bg);font-size:13px;font-weight:800;transform:translateY(-180%);transition:transform .18s ease}.skip-link:focus{transform:translateY(0)}
+
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent2);outline-offset:3px}
+
+/* Rozjaśnienie najmniejszych tekstów dla lepszego kontrastu. */
+.num{color:#89929b}.gallery-source{color:#8c959e}.gallery-source a{color:#b0b7be}
+
+.legal-copy{max-width:900px;color:#b9c0c7}.legal-copy h2{font-size:clamp(24px,3vw,34px);margin:44px 0 14px}.legal-copy h2:first-child{margin-top:0}.legal-copy p{margin:0 0 16px}.legal-copy a{color:var(--accent2);text-decoration:underline;text-underline-offset:3px}
+
+@media(max-width:560px){.breadcrumbs{padding-top:16px}.footer-links{gap:10px 14px}.skip-link{left:10px;top:8px}}
