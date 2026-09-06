@@ -1,29 +1,70 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
+header('X-Robots-Tag: noindex, nofollow, noarchive');
+header('Cache-Control: no-store, max-age=0');
+header('Referrer-Policy: no-referrer');
 
 date_default_timezone_set('Europe/Warsaw');
-
-if (isset($_GET['health'])) {
-    echo json_encode([
-        'ok' => true,
-        'message' => 'ACRE quote endpoint active',
-        'mail_available' => function_exists('mail')
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['ok' => false, 'message' => 'Method not allowed'], JSON_UNESCAPED_UNICODE);
-    exit;
-}
 
 function respond($code, $message) {
     http_response_code($code);
     echo json_encode(['ok' => $code >= 200 && $code < 300, 'message' => $message], JSON_UNESCAPED_UNICODE);
     exit;
 }
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    respond(405, 'Method not allowed');
+}
+
+// Odrzucaj cross-site POST-y, jeśli przeglądarka przekazała nagłówek Origin.
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if ($origin !== '') {
+    $originHost = strtolower((string)parse_url($origin, PHP_URL_HOST));
+    if (!in_array($originHost, ['acreworks.pl', 'www.acreworks.pl'], true)) {
+        respond(403, 'Nieprawidłowe źródło żądania.');
+    }
+}
+
+function enforce_rate_limit($maxRequests = 8, $windowSeconds = 600) {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $key = hash('sha256', $ip);
+    $file = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'acre_quote_' . $key . '.json';
+    $handle = @fopen($file, 'c+');
+    if (!$handle) {
+        return; // Jeśli hosting nie pozwala na pliki tymczasowe, formularz nadal działa.
+    }
+
+    if (@flock($handle, LOCK_EX)) {
+        rewind($handle);
+        $raw = stream_get_contents($handle);
+        $times = json_decode((string)$raw, true);
+        if (!is_array($times)) {
+            $times = [];
+        }
+
+        $now = time();
+        $times = array_values(array_filter($times, function ($time) use ($now, $windowSeconds) {
+            return is_numeric($time) && ((int)$time > $now - $windowSeconds);
+        }));
+
+        if (count($times) >= $maxRequests) {
+            flock($handle, LOCK_UN);
+            fclose($handle);
+            respond(429, 'Wysłano zbyt wiele zapytań. Spróbuj ponownie za kilka minut.');
+        }
+
+        $times[] = $now;
+        ftruncate($handle, 0);
+        rewind($handle);
+        fwrite($handle, json_encode($times));
+        fflush($handle);
+        flock($handle, LOCK_UN);
+    }
+    fclose($handle);
+}
+
+enforce_rate_limit();
 
 function clean_text($value, $maxLength) {
     $value = is_string($value) ? trim(str_replace("\0", '', $value)) : '';
@@ -40,6 +81,15 @@ function single_line($value) {
 // Honeypot. Boty zwykle wypełniają ukryte pole.
 if (!empty($_POST['website'])) {
     respond(200, 'Dziękujemy.');
+}
+
+// Pole jest ustawiane przez JavaScript. Brak wartości nie blokuje formularza bez JS.
+$formStarted = isset($_POST['form_started']) ? (int)$_POST['form_started'] : 0;
+if ($formStarted > 0) {
+    $elapsed = time() - $formStarted;
+    if ($elapsed < 2 || $elapsed > 7200) {
+        respond(400, 'Formularz został wysłany w nieprawidłowy sposób. Odśwież stronę i spróbuj ponownie.');
+    }
 }
 
 $name = clean_text($_POST['name'] ?? '', 120);
@@ -60,7 +110,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $email)
     respond(422, 'Podaj prawidłowy adres e-mail.');
 }
 
-$allowedServices = ['Druk 3D', 'Laser', 'Projekt CAD', 'Krótka seria / B2B'];
+$allowedServices = ['Druk 3D', 'Laser', 'Projekt CAD', 'Krótka seria / B2B', 'ACRE / ASTRO'];
 if (!in_array($service, $allowedServices, true)) {
     $service = 'Inne zapytanie';
 }
@@ -68,8 +118,14 @@ if (!in_array($service, $allowedServices, true)) {
 $attachments = [];
 $totalSize = 0;
 $maxTotalSize = 15 * 1024 * 1024;
+$maxSingleSize = 12 * 1024 * 1024;
 $maxFiles = 5;
 $allowedExtensions = ['step','stp','stl','3mf','obj','svg','pdf','jpg','jpeg','png','dxf','dwg','zip'];
+$blockedMimes = [
+    'application/x-httpd-php', 'application/x-php', 'text/x-php',
+    'application/x-executable', 'application/x-dosexec',
+    'application/x-sh', 'text/x-shellscript'
+];
 
 if (isset($_FILES['files']) && is_array($_FILES['files']['name'])) {
     $fileCount = count($_FILES['files']['name']);
@@ -98,15 +154,13 @@ if (isset($_FILES['files']) && is_array($_FILES['files']['name'])) {
         if ($size <= 0 || !is_uploaded_file($tmp)) {
             respond(400, 'Nieprawidłowy załącznik: ' . $originalName);
         }
+        if ($size > $maxSingleSize) {
+            respond(413, 'Pojedynczy załącznik może mieć maksymalnie 12 MB.');
+        }
 
         $totalSize += $size;
         if ($totalSize > $maxTotalSize) {
             respond(413, 'Załączniki mogą mieć łącznie maksymalnie 15 MB.');
-        }
-
-        $data = file_get_contents($tmp);
-        if ($data === false) {
-            respond(500, 'Nie udało się odczytać załącznika.');
         }
 
         $mime = 'application/octet-stream';
@@ -115,10 +169,25 @@ if (isset($_FILES['files']) && is_array($_FILES['files']['name'])) {
             if ($finfo) {
                 $detected = finfo_file($finfo, $tmp);
                 if (is_string($detected) && $detected !== '') {
-                    $mime = $detected;
+                    $mime = strtolower($detected);
                 }
                 finfo_close($finfo);
             }
+        }
+
+        if (in_array($mime, $blockedMimes, true)) {
+            respond(415, 'Załącznik ma niedozwolony typ zawartości: ' . $originalName);
+        }
+
+        $data = file_get_contents($tmp);
+        if ($data === false) {
+            respond(500, 'Nie udało się odczytać załącznika.');
+        }
+
+        // Dodatkowa blokada najprostszych prób przemycenia skryptu jako dozwolonego pliku.
+        $prefix = strtolower(substr(ltrim($data), 0, 64));
+        if (strpos($prefix, '<?php') !== false || strpos($prefix, '#!/bin/sh') !== false || strpos($prefix, '#!/bin/bash') !== false) {
+            respond(415, 'Załącznik zawiera niedozwoloną zawartość: ' . $originalName);
         }
 
         $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName);
