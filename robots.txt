@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://acreworks.pl/sitemap.xml
