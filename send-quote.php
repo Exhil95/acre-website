@@ -2,6 +2,8 @@
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 
+date_default_timezone_set('Europe/Warsaw');
+
 if (isset($_GET['health'])) {
     echo json_encode([
         'ok' => true,
@@ -29,6 +31,10 @@ function clean_text($value, $maxLength) {
         return mb_substr($value, 0, $maxLength, 'UTF-8');
     }
     return substr($value, 0, $maxLength);
+}
+
+function single_line($value) {
+    return trim(preg_replace('/[\r\n]+/', ' ', (string)$value));
 }
 
 // Honeypot. Boty zwykle wypełniają ukryte pole.
@@ -83,6 +89,7 @@ if (isset($_FILES['files']) && is_array($_FILES['files']['name'])) {
         $tmp = $_FILES['files']['tmp_name'][$i] ?? '';
         $size = (int)($_FILES['files']['size'][$i] ?? 0);
         $originalName = basename((string)($_FILES['files']['name'][$i] ?? 'plik'));
+        $originalName = single_line($originalName);
         $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
 
         if (!in_array($extension, $allowedExtensions, true)) {
@@ -117,34 +124,62 @@ if (isset($_FILES['files']) && is_array($_FILES['files']['name'])) {
         $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName);
         $attachments[] = [
             'name' => $safeName ?: ('zalacznik_' . ($i + 1) . '.' . $extension),
+            'display_name' => $originalName,
+            'size' => $size,
             'mime' => $mime,
             'data' => $data
         ];
     }
 }
 
+$attachmentLines = [];
+if (count($attachments) === 0) {
+    $attachmentLines[] = 'Brak';
+} else {
+    foreach ($attachments as $attachment) {
+        $attachmentLines[] = '- ' . $attachment['display_name'] . ' (' . number_format($attachment['size'] / 1024, 0, ',', ' ') . ' KB)';
+    }
+}
+
 $bodyLines = [
-    'Nowe zapytanie z acreworks.pl',
+    'ACRE | NOWE ZAPYTANIE',
+    '============================================================',
+    'Data: ' . date('Y-m-d H:i'),
     '',
+    'KLIENT',
+    '------------------------------------------------------------',
     'Imię / firma: ' . $name,
     'E-mail: ' . $email,
     'Telefon: ' . ($phone !== '' ? $phone : '-'),
+    '',
+    'ZLECENIE',
+    '------------------------------------------------------------',
     'Usługa: ' . $service,
     'Liczba sztuk: ' . ($quantity !== '' ? $quantity : '-'),
     'Preferowany materiał: ' . ($material !== '' ? $material : 'do ustalenia'),
     'Wymiary / gabaryt: ' . ($dimensions !== '' ? $dimensions : '-'),
     'Termin: ' . ($deadline !== '' ? $deadline : 'bez konkretnego terminu'),
     '',
-    'Opis projektu:',
+    'OPIS PROJEKTU',
+    '------------------------------------------------------------',
     $description,
     '',
-    'Załączniki: ' . count($attachments),
+    'ZAŁĄCZNIKI',
+    '------------------------------------------------------------',
+    ...$attachmentLines,
+    '',
+    'LOGISTYKA',
+    '------------------------------------------------------------',
     'Wysyłka: InPost / cała Polska'
 ];
 $plainBody = implode("\r\n", $bodyLines);
 
 $to = 'kontakt@acreworks.pl';
-$subjectText = 'Wycena ACRE | ' . $service . ' | ' . $name;
+$subjectParts = ['ACRE', $service, $name];
+if ($quantity !== '') {
+    $subjectParts[] = $quantity . ' szt.';
+}
+$subjectText = implode(' | ', $subjectParts);
 $subject = '=?UTF-8?B?' . base64_encode($subjectText) . '?=';
 $boundary = 'acre_' . bin2hex(random_bytes(12));
 
