@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     respond(405, 'Method not allowed');
 }
 
-// Odrzucaj cross-site POST-y, jeśli przeglądarka przekazała nagłówek Origin.
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 if ($origin !== '') {
     $originHost = strtolower((string)parse_url($origin, PHP_URL_HOST));
@@ -32,7 +31,7 @@ function enforce_rate_limit($maxRequests = 8, $windowSeconds = 600) {
     $file = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'acre_quote_' . $key . '.json';
     $handle = @fopen($file, 'c+');
     if (!$handle) {
-        return; // Jeśli hosting nie pozwala na pliki tymczasowe, formularz nadal działa.
+        return;
     }
 
     if (@flock($handle, LOCK_EX)) {
@@ -78,12 +77,10 @@ function single_line($value) {
     return trim(preg_replace('/[\r\n]+/', ' ', (string)$value));
 }
 
-// Honeypot. Boty zwykle wypełniają ukryte pole.
 if (!empty($_POST['website'])) {
     respond(200, 'Dziękujemy.');
 }
 
-// Pole jest ustawiane przez JavaScript. Brak wartości nie blokuje formularza bez JS.
 $formStarted = isset($_POST['form_started']) ? (int)$_POST['form_started'] : 0;
 if ($formStarted > 0) {
     $elapsed = time() - $formStarted;
@@ -96,9 +93,11 @@ $name = clean_text($_POST['name'] ?? '', 120);
 $email = clean_text($_POST['email'] ?? '', 180);
 $phone = clean_text($_POST['phone'] ?? '', 40);
 $service = clean_text($_POST['service'] ?? '', 80);
+$context = clean_text($_POST['context'] ?? '', 120);
 $quantity = clean_text($_POST['quantity'] ?? '', 40);
 $material = clean_text($_POST['material'] ?? '', 100);
 $dimensions = clean_text($_POST['dimensions'] ?? '', 120);
+$branding = clean_text($_POST['branding'] ?? '', 240);
 $deadline = clean_text($_POST['deadline'] ?? '', 120);
 $description = clean_text($_POST['description'] ?? '', 6000);
 
@@ -110,9 +109,14 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $email)
     respond(422, 'Podaj prawidłowy adres e-mail.');
 }
 
-$allowedServices = ['Druk 3D', 'Laser', 'Projekt CAD', 'Krótka seria / B2B', 'ACRE / ASTRO'];
+$allowedServices = ['Druk 3D', 'Laser', 'Projekt CAD', 'Krótka seria / B2B'];
 if (!in_array($service, $allowedServices, true)) {
     $service = 'Inne zapytanie';
+}
+
+$allowedContexts = ['', 'ACRE / ASTRO'];
+if (!in_array($context, $allowedContexts, true)) {
+    $context = '';
 }
 
 $attachments = [];
@@ -184,7 +188,6 @@ if (isset($_FILES['files']) && is_array($_FILES['files']['name'])) {
             respond(500, 'Nie udało się odczytać załącznika.');
         }
 
-        // Dodatkowa blokada najprostszych prób przemycenia skryptu jako dozwolonego pliku.
         $prefix = strtolower(substr(ltrim($data), 0, 64));
         if (strpos($prefix, '<?php') !== false || strpos($prefix, '#!/bin/sh') !== false || strpos($prefix, '#!/bin/bash') !== false) {
             respond(415, 'Załącznik zawiera niedozwoloną zawartość: ' . $originalName);
@@ -224,9 +227,11 @@ $bodyLines = [
     'ZLECENIE',
     '------------------------------------------------------------',
     'Usługa: ' . $service,
+    'Kontekst: ' . ($context !== '' ? $context : '-'),
     'Liczba sztuk: ' . ($quantity !== '' ? $quantity : '-'),
     'Preferowany materiał: ' . ($material !== '' ? $material : 'do ustalenia'),
     'Wymiary / gabaryt: ' . ($dimensions !== '' ? $dimensions : '-'),
+    'Kolorystyka / branding: ' . ($branding !== '' ? $branding : 'do ustalenia'),
     'Termin: ' . ($deadline !== '' ? $deadline : 'bez konkretnego terminu'),
     '',
     'OPIS PROJEKTU',
@@ -244,7 +249,11 @@ $bodyLines = [
 $plainBody = implode("\r\n", $bodyLines);
 
 $to = 'kontakt@acreworks.pl';
-$subjectParts = ['ACRE', $service, $name];
+$subjectParts = ['ACRE', $service];
+if ($context !== '') {
+    $subjectParts[] = $context;
+}
+$subjectParts[] = $name;
 if ($quantity !== '') {
     $subjectParts[] = $quantity . ' szt.';
 }
