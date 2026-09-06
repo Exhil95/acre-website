@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /send-quote.php
 
 Sitemap: https://acreworks.pl/sitemap.xml
