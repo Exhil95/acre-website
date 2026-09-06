@@ -5,9 +5,12 @@
   :root{--motion:cubic-bezier(.2,.75,.25,1)}
   .site-header{transition:background .35s ease,border-color .35s ease,box-shadow .35s ease,transform .35s ease}
   .site-header.is-scrolled{background:rgba(11,13,15,.94);border-bottom-color:rgba(224,160,110,.16);box-shadow:0 12px 42px rgba(0,0,0,.22)}
-  .navlinks a{position:relative;transition:color .2s ease}
+  .navlinks{align-items:center}
+  .navlinks a{position:relative;transition:color .2s ease;white-space:nowrap}
   .navlinks a:after{content:"";position:absolute;left:0;right:100%;bottom:-8px;height:1px;background:var(--accent2);transition:right .28s var(--motion)}
-  .navlinks a:hover:after{right:0}
+  .navlinks a:hover:after,.navlinks a.is-active:after{right:0}
+  .navlinks a.is-active{color:var(--text)}
+  .footer-links a.is-active{color:var(--text)}
   .acre-progress{position:fixed;z-index:100;left:0;top:0;width:100%;height:2px;pointer-events:none;background:transparent}
   .acre-progress span{display:block;width:100%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transform-origin:0 50%;transform:scaleX(0)}
   .motion-ready .reveal{opacity:0;transform:translate3d(0,26px,0);filter:blur(3px);transition:opacity .75s var(--motion),transform .75s var(--motion),filter .75s var(--motion);transition-delay:var(--reveal-delay,0ms)}
@@ -37,7 +40,8 @@
   .faq details[open]{border-color:rgba(224,160,110,.27);background:#13171b}
   .faq details[open] p{animation:faqIn .35s var(--motion)}
   @keyframes faqIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
-  @media(max-width:900px){.hero-logo{animation:none}.card,.passion-card,.tech-detail-card,.feature-item,.b2b-point,.step{transform:none!important}}
+  @media(min-width:901px) and (max-width:1120px){.navlinks{gap:16px}.navlinks a{font-size:13px}.brand{gap:9px}.brand .logo-frame{width:42px}.nav-actions{gap:8px}.desktop-cta{padding:0 16px}}
+  @media(max-width:900px){.hero-logo{animation:none}.card,.passion-card,.tech-detail-card,.feature-item,.b2b-point,.step{transform:none!important}.navlinks a.is-active{color:var(--accent2)}}
   @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.motion-ready .reveal,.motion-ready .reveal.visible,.hero .eyebrow,.hero h1,.hero .lead,.hero .sublead,.hero .actions,.hero .techline,.page-hero .kicker,.page-hero h1,.page-hero> .wrap>p,.page-hero .actions{opacity:1!important;transform:none!important;filter:none!important;animation:none!important;transition:none!important}.hero-logo,.hero-logo:before{animation:none!important}.equipment-media img,.tech-gallery-card img{transform:none!important}.acre-progress{display:none!important}}
   `;
   const style=document.createElement('style');style.id='acre-motion';style.textContent=css;document.head.appendChild(style);
@@ -56,17 +60,89 @@
 
   if(!reduced)document.body.classList.add('motion-ready');
 
-  const menuButton=document.querySelector('.menu-toggle');
+  const currentFile=location.pathname.split('/').filter(Boolean).pop()||'index.html';
+  const activeMap={
+    'druk-3d-na-zamowienie.html':'/druk-3d-na-zamowienie.html',
+    'druk-3d-dla-hobbystow.html':'/druk-3d-na-zamowienie.html',
+    'grawerowanie-ciecie-laserowe.html':'/grawerowanie-ciecie-laserowe.html',
+    'projektowanie-cad.html':'/projektowanie-cad.html',
+    'dla-firm.html':'/dla-firm.html',
+    'akcesoria-astronomiczne.html':'/akcesoria-astronomiczne.html',
+    'technologia.html':'/technologia.html'
+  };
+  const activeHref=activeMap[currentFile]||'';
+
   const navLinks=document.querySelector('.navlinks');
+  if(navLinks){
+    navLinks.innerHTML=`
+      <a href="/druk-3d-na-zamowienie.html">Druk 3D</a>
+      <a href="/grawerowanie-ciecie-laserowe.html">Laser</a>
+      <a href="/projektowanie-cad.html">CAD</a>
+      <a href="/dla-firm.html">Dla firm</a>
+      <a href="/akcesoria-astronomiczne.html">ACRE / ASTRO</a>
+      <a href="/technologia.html">Technologia</a>`;
+    navLinks.querySelectorAll('a').forEach(link=>{
+      if(activeHref&&link.getAttribute('href')===activeHref){
+        link.classList.add('is-active');
+        link.setAttribute('aria-current','page');
+      }
+    });
+  }
+
+  const brand=document.querySelector('.brand');
+  if(brand)brand.setAttribute('href','/');
+
+  const navActions=document.querySelector('.nav-actions');
+  let menuButton=document.querySelector('.menu-toggle');
+  if(navLinks&&navActions&&!menuButton){
+    menuButton=document.createElement('button');
+    menuButton.className='menu-toggle';
+    menuButton.type='button';
+    menuButton.setAttribute('aria-label','Otwórz menu');
+    menuButton.setAttribute('aria-expanded','false');
+    menuButton.innerHTML='<span></span><span></span>';
+    navActions.appendChild(menuButton);
+  }
+
   if(menuButton&&navLinks){
     menuButton.addEventListener('click',()=>{
       const open=navLinks.classList.toggle('open');
       document.body.classList.toggle('menu-open',open);
       menuButton.setAttribute('aria-expanded',String(open));
+      menuButton.setAttribute('aria-label',open?'Zamknij menu':'Otwórz menu');
     });
     navLinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{
-      navLinks.classList.remove('open');document.body.classList.remove('menu-open');menuButton.setAttribute('aria-expanded','false');
+      navLinks.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      menuButton.setAttribute('aria-expanded','false');
+      menuButton.setAttribute('aria-label','Otwórz menu');
     }));
+  }
+
+  const footer=document.querySelector('footer .wrap');
+  if(footer){
+    let footerLinks=footer.querySelector('.footer-links');
+    if(!footerLinks){
+      footerLinks=document.createElement('nav');
+      footerLinks.className='footer-links';
+      footerLinks.setAttribute('aria-label','Nawigacja stopki');
+      footer.appendChild(footerLinks);
+    }
+    footerLinks.innerHTML=`
+      <a href="/">Strona główna</a>
+      <a href="/druk-3d-na-zamowienie.html">Druk 3D</a>
+      <a href="/grawerowanie-ciecie-laserowe.html">Laser</a>
+      <a href="/projektowanie-cad.html">CAD</a>
+      <a href="/dla-firm.html">Dla firm</a>
+      <a href="/druk-3d-dla-hobbystow.html">Hobby / DIY</a>
+      <a href="/akcesoria-astronomiczne.html">ACRE / ASTRO</a>
+      <a href="/technologia.html">Technologia</a>
+      <a href="/wycena.html">Wycena</a>
+      <a href="/polityka-prywatnosci.html">Prywatność</a>`;
+    footerLinks.querySelectorAll('a').forEach(link=>{
+      const href=link.getAttribute('href');
+      if((currentFile==='index.html'&&href==='/')||href.endsWith('/'+currentFile))link.classList.add('is-active');
+    });
   }
 
   const reveals=[...document.querySelectorAll('.reveal')];
@@ -102,5 +178,6 @@
     scrollTick=false;
   };
   window.addEventListener('scroll',()=>{if(!scrollTick){scrollTick=true;requestAnimationFrame(updateScroll);}},{passive:true});
-  window.addEventListener('resize',updateScroll,{passive:true});updateScroll();
+  window.addEventListener('resize',updateScroll,{passive:true});
+  updateScroll();
 })();
