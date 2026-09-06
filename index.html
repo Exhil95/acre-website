@@ -3,131 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ACRE | druk 3D, laser i projektowanie</title>
-  <meta name="description" content="ACRE: druk 3D, grawerowanie laserowe, projektowanie i krótkie serie na zamówienie.">
+  <title>ACRE | druk 3D, grawerowanie laserowe i projektowanie</title>
+  <meta name="description" content="ACRE wykonuje druk 3D na zamówienie, grawerowanie i cięcie laserowe, projektowanie CAD oraz krótkie serie. Od pomysłu i szkicu do gotowego detalu.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#0b0d0f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ACRE | druk 3D, laser i projektowanie">
+  <meta property="og:description" content="Druk 3D, grawerowanie laserowe, projektowanie CAD i krótkie serie na zamówienie.">
+  <meta property="og:image" content="assets/acre-logo.png">
   <link rel="icon" type="image/png" href="assets/acre-logo.png">
   <link rel="apple-touch-icon" href="assets/acre-logo.png">
-  <style>
-    :root{
-      --bg:#0b0d0f;
-      --panel:#111418;
-      --panel2:#15191e;
-      --text:#f2f0ea;
-      --muted:#9ca3ad;
-      --line:#262c33;
-      --accent:#c47a45;
-      --accent2:#e0a06e;
-      --max:1180px;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      background:
-        radial-gradient(1100px 500px at 76% 0%, rgba(196,122,69,.08), transparent 60%),
-        var(--bg);
-      color:var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height:1.55;
-    }
-    a{color:inherit;text-decoration:none}
-    .wrap{width:min(calc(100% - 40px),var(--max));margin:auto}
-    header{
-      position:sticky;top:0;z-index:10;
-      border-bottom:1px solid rgba(255,255,255,.07);
-      background:rgba(11,13,15,.82);
-      backdrop-filter:blur(16px);
-    }
-    nav{
-      height:76px;display:flex;align-items:center;justify-content:space-between;gap:28px
-    }
-    .brand{display:flex;align-items:center;gap:12px;font-weight:750;letter-spacing:.20em}
-    /* Original PNG, unchanged. Trim transparent margins through layout only. */
-    .logo-frame{position:relative;display:block;overflow:hidden;aspect-ratio:921 / 962;flex-shrink:0}
-    .logo-frame img{
-      position:absolute;width:136.1564%;max-width:none;height:auto;
-      left:-16.9381%;top:-5.5094%;
-      filter:brightness(0) invert(1);opacity:.94
-    }
-    .brand .logo-frame{width:46px}
-    .navlinks{display:flex;gap:26px;color:#c6cbd1;font-size:14px}
-    .navlinks a:hover{color:white}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;
-      min-height:48px;padding:0 21px;border:1px solid var(--line);
-      font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-      transition:.2s ease;
-    }
-    .btn.primary{background:var(--accent);border-color:var(--accent);color:#100c09}
-    .btn.primary:hover{background:var(--accent2);transform:translateY(-1px)}
-    .btn.ghost:hover{border-color:#6b737c;background:rgba(255,255,255,.03)}
-    .hero{
-      min-height:760px;display:grid;align-items:center;padding:96px 0 72px;
-      border-bottom:1px solid var(--line)
-    }
-    .hero-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:64px;align-items:center}
-    .eyebrow{
-      color:var(--accent2);font-size:12px;font-weight:750;letter-spacing:.22em;
-      text-transform:uppercase;margin-bottom:22px
-    }
-    h1{
-      font-size:clamp(48px,7vw,92px);line-height:.96;letter-spacing:-.045em;
-      margin:0 0 28px;max-width:850px;font-weight:780
-    }
-    .lead{font-size:clamp(18px,2vw,24px);color:#c7cbd0;max-width:760px;margin:0 0 18px}
-    .sublead{color:var(--muted);max-width:710px;margin:0 0 34px}
-    .actions{display:flex;gap:12px;flex-wrap:wrap}
-    .techline{
-      margin-top:58px;padding-top:20px;border-top:1px solid var(--line);
-      display:flex;gap:22px;flex-wrap:wrap;color:#7e8790;font-size:11px;font-weight:700;letter-spacing:.18em
-    }
-    .hero-logo{width:100%;max-width:350px;justify-self:center}
-    section{padding:96px 0}
-    .section-head{display:flex;justify-content:space-between;gap:40px;align-items:end;margin-bottom:42px}
-    .kicker{font-size:11px;color:var(--accent2);letter-spacing:.18em;text-transform:uppercase;font-weight:800}
-    h2{font-size:clamp(34px,4.5vw,58px);letter-spacing:-.035em;line-height:1.02;margin:10px 0 0}
-    .section-copy{max-width:470px;color:var(--muted);margin:0}
-    .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
-    .card{background:var(--panel);padding:36px;min-height:280px;display:flex;flex-direction:column}
-    .num{color:#6d747d;font-size:11px;letter-spacing:.18em;margin-bottom:52px}
-    .card h3{font-size:25px;margin:0 0 12px;letter-spacing:-.02em}
-    .card p{color:var(--muted);max-width:500px;margin:0 0 24px}
-    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
-    .chip{border:1px solid #313840;color:#aab0b7;padding:7px 9px;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
-    .note{
-      border:1px solid var(--line);background:linear-gradient(120deg,var(--panel2),#0e1114);
-      padding:34px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:30px
-    }
-    .note strong{font-size:20px}
-    .note span{color:var(--muted)}
-    footer{border-top:1px solid var(--line);padding:32px 0;color:#777f88;font-size:12px}
-    @media(max-width:840px){
-      .navlinks{display:none}
-      .hero{min-height:auto}
-      .hero-grid{grid-template-columns:1fr}
-      .hero-logo{display:none}
-      .cards{grid-template-columns:1fr}
-      .section-head{display:block}
-      .section-copy{margin-top:20px}
-      .note{align-items:flex-start;flex-direction:column}
-    }
-  </style>
+  <link rel="stylesheet" href="assets/styles.css?v=2">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"ProfessionalService",
+    "name":"ACRE",
+    "description":"Druk 3D na zamówienie, grawerowanie i cięcie laserowe, projektowanie CAD oraz krótkie serie.",
+    "areaServed":"Polska",
+    "knowsAbout":["druk 3D","grawerowanie laserowe","cięcie laserowe","projektowanie CAD","prototypowanie","krótkie serie"]
+  }
+  </script>
 </head>
 <body>
-<header>
+<header class="site-header">
   <div class="wrap">
-    <nav>
-      <a class="brand" href="#">
+    <nav aria-label="Główna nawigacja">
+      <a class="brand" href="index.html" aria-label="ACRE strona główna">
         <span class="logo-frame"><img src="assets/acre-logo.png" alt="" width="1254" height="1254"></span>
         <span>ACRE</span>
       </a>
       <div class="navlinks">
         <a href="#uslugi">Usługi</a>
+        <a href="technologia.html">Technologia</a>
+        <a href="#proces">Jak zamówić</a>
         <a href="#firmy">Dla firm</a>
-        <a href="#wycena">Jak zamówić</a>
         <a href="#kontakt">Kontakt</a>
       </div>
-      <a class="btn ghost" href="#wycena">Wyceń projekt</a>
+      <div class="nav-actions">
+        <a class="btn ghost desktop-cta" href="#wycena">Wyceń projekt</a>
+        <button class="menu-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span></button>
+      </div>
     </nav>
   </div>
 </header>
@@ -135,7 +51,7 @@
 <main>
   <section class="hero">
     <div class="wrap hero-grid">
-      <div>
+      <div class="reveal visible">
         <div class="eyebrow">Digital fabrication / made to order</div>
         <h1>Od pomysłu<br>do gotowego detalu.</h1>
         <p class="lead">Druk 3D, grawerowanie laserowe i projektowanie na zamówienie.</p>
@@ -148,7 +64,7 @@
           <span>DRUK 3D</span><span>LASER</span><span>PROJEKTOWANIE</span><span>KRÓTKIE SERIE</span>
         </div>
       </div>
-      <div class="hero-logo logo-frame">
+      <div class="hero-logo logo-frame reveal visible">
         <img src="assets/acre-logo.png" alt="Logo ACRE" width="1254" height="1254">
       </div>
     </div>
@@ -156,57 +72,110 @@
 
   <section id="uslugi">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head reveal">
         <div>
           <div class="kicker">Możliwości</div>
           <h2>Co możemy dla Ciebie wykonać?</h2>
         </div>
         <p class="section-copy">Nie musisz wiedzieć, jakiej technologii potrzebujesz. Opisz problem, podaj wymiary albo prześlij plik. Dobierzemy sposób wykonania.</p>
       </div>
-
-      <div class="cards">
+      <div class="cards reveal">
         <article class="card">
           <div class="num">01 / ADDITIVE</div>
-          <h3>Druk 3D</h3>
+          <h3>Druk 3D na zamówienie</h3>
           <p>Elementy użytkowe, uchwyty, adaptery, prototypy i krótkie serie. Możemy wykonać gotowy model albo pomóc dopracować projekt do drukowania.</p>
-          <div class="chips">
-            <span class="chip">części na wymiar</span><span class="chip">prototypy</span><span class="chip">małe serie</span>
-          </div>
+          <div class="chips"><span class="chip">części na wymiar</span><span class="chip">prototypy</span><span class="chip">małe serie</span></div>
         </article>
-
         <article class="card">
           <div class="num">02 / LASER</div>
           <h3>Grawerowanie i cięcie laserowe</h3>
-          <p>Personalizacja, oznaczenia, tabliczki, grafiki, napisy, QR i DataMatrix. Grawer na drewnie, sklejce i wybranych powierzchniach metalowych.</p>
-          <div class="chips">
-            <span class="chip">grawer</span><span class="chip">tabliczki</span><span class="chip">qr / datamatrix</span>
-          </div>
+          <p>Personalizacja, oznaczenia, tabliczki, grafiki, napisy, QR i DataMatrix. Obróbka drewna, sklejki i wybranych powierzchni metalowych.</p>
+          <div class="chips"><span class="chip">grawer</span><span class="chip">cięcie</span><span class="chip">qr / datamatrix</span></div>
         </article>
-
         <article class="card">
           <div class="num">03 / DESIGN</div>
-          <h3>Projektowanie</h3>
-          <p>Nie masz modelu? Wystarczy szkic, zdjęcie, uszkodzony element albo zestaw wymiarów. Przygotujemy projekt 3D lub grafikę pod wykonanie.</p>
-          <div class="chips">
-            <span class="chip">cad</span><span class="chip">modele 3d</span><span class="chip">wektory</span>
-          </div>
+          <h3>Projektowanie CAD i przygotowanie plików</h3>
+          <p>Nie masz modelu? Wystarczy szkic, zdjęcie, uszkodzony element albo zestaw wymiarów. Przygotujemy model 3D lub grafikę wektorową do wykonania.</p>
+          <div class="chips"><span class="chip">cad</span><span class="chip">modele 3d</span><span class="chip">wektory</span></div>
         </article>
-
-        <article class="card" id="firmy">
+        <article class="card">
           <div class="num">04 / B2B</div>
-          <h3>Dla firm</h3>
-          <p>Oznaczenia, uchwyty, organizery, prototypy i niewielkie serie elementów. Dobre rozwiązanie tam, gdzie produkcja jednej lub kilkunastu sztuk klasyczną metodą nie ma sensu.</p>
-          <div class="chips">
-            <span class="chip">krótkie serie</span><span class="chip">oznaczenia</span><span class="chip">elementy techniczne</span>
-          </div>
+          <h3>Prototypy i krótkie serie dla firm</h3>
+          <p>Oznaczenia, uchwyty, organizery, prototypy i niewielkie serie elementów. Rozwiązanie tam, gdzie klasyczna produkcja pojedynczych sztuk nie ma ekonomicznego sensu.</p>
+          <div class="chips"><span class="chip">krótkie serie</span><span class="chip">oznaczenia</span><span class="chip">elementy techniczne</span></div>
         </article>
       </div>
+    </div>
+  </section>
 
-      <div class="note" id="wycena">
-        <div>
-          <strong>Masz pomysł, ale nie wiesz jak go wykonać?</strong><br>
-          <span>Wyślij opis, zdjęcie, szkic albo plik. Zaczniemy od bezpłatnej wyceny.</span>
+  <section class="equipment-section" id="technologia">
+    <div class="wrap equipment-grid">
+      <div class="equipment-copy reveal">
+        <div class="kicker">Na czym pracujemy</div>
+        <h2>Bambu Lab H2S Laser Full Combo</h2>
+        <p class="equipment-lead">Jedna platforma do dużych wydruków 3D, precyzyjnego grawerowania laserowego i cięcia. Dzięki temu możemy prowadzić projekt od modelu cyfrowego do gotowego elementu bez przerzucania pracy między przypadkowymi podwykonawcami.</p>
+        <div class="spec-grid">
+          <div><strong>340 × 320 × 340 mm</strong><span>obszar roboczy druku 3D</span></div>
+          <div><strong>10 W</strong><span>moduł lasera diodowego</span></div>
+          <div><strong>350°C</strong><span>maksymalna temperatura hotendu</span></div>
+          <div><strong>65°C</strong><span>aktywnie grzana komora</span></div>
         </div>
+        <a class="text-link" href="technologia.html">Poznaj naszą technologię <span aria-hidden="true">→</span></a>
+      </div>
+      <figure class="equipment-media reveal">
+        <img src="https://storage.ghost.io/c/8d/d9/8dd9f85b-21c3-4782-bba8-8778cd8f2f93/content/images/size/w1200/2025/08/H2S-banner_1024x667.jpg" alt="Bambu Lab H2S używany do druku 3D i pracy z laserem" loading="lazy" width="1024" height="667">
+        <figcaption>Zdjęcie producenta: Bambu Lab. Docelowo zastąpimy je własnym zdjęciem stanowiska ACRE.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="proces">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div><div class="kicker">Proces</div><h2>Jak wygląda zamówienie?</h2></div>
+        <p class="section-copy">Możesz zacząć od gotowego pliku albo od samego pomysłu. Najpierw ustalamy wymagania, potem technologię, koszt i termin.</p>
+      </div>
+      <div class="process-grid reveal">
+        <article class="step"><div class="step-no">01 / KONTAKT</div><h3>Opisujesz potrzebę</h3><p>Wyślij zdjęcie, szkic, plik lub kilka zdań o tym, czego potrzebujesz.</p></article>
+        <article class="step"><div class="step-no">02 / ANALIZA</div><h3>Dobieramy wykonanie</h3><p>Sprawdzamy geometrię, materiał, technologię i ewentualne poprawki projektu.</p></article>
+        <article class="step"><div class="step-no">03 / WYCENA</div><h3>Potwierdzasz zakres</h3><p>Dostajesz jasną wycenę i termin przed rozpoczęciem pracy.</p></article>
+        <article class="step"><div class="step-no">04 / REALIZACJA</div><h3>Wykonujemy detal</h3><p>Produkujemy, kontrolujemy efekt i przygotowujemy zamówienie do odbioru lub wysyłki.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="b2b" id="firmy">
+    <div class="wrap b2b-grid">
+      <div class="reveal">
+        <div class="kicker">ACRE / B2B</div>
+        <h2>Małe serie bez kosztu klasycznego oprzyrządowania.</h2>
+        <p class="section-copy wide">Druk 3D i laser sprawdzają się tam, gdzie potrzebujesz jednej sztuki, kilku prototypów albo krótkiej serii bez inwestowania w formy, wykrojniki czy drogie uruchomienie produkcji.</p>
+      </div>
+      <div class="b2b-points reveal">
+        <div class="b2b-point"><strong>Uchwyty i elementy pomocnicze</strong><span>Części dopasowane do konkretnego stanowiska lub zastosowania.</span></div>
+        <div class="b2b-point"><strong>Oznaczenia i tabliczki</strong><span>Napisy, kody QR, DataMatrix i identyfikacja elementów.</span></div>
+        <div class="b2b-point"><strong>Prototypy przed produkcją</strong><span>Szybka weryfikacja wymiarów, ergonomii i montażu.</span></div>
+        <div class="b2b-point"><strong>Krótkie serie</strong><span>Produkcja małych ilości bez niepotrzebnego kosztu wejścia.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="section-head reveal"><div><div class="kicker">FAQ</div><h2 id="faq-title">Najczęstsze pytania</h2></div></div>
+      <div class="faq-grid reveal">
+        <details><summary>Czy muszę mieć gotowy model 3D?</summary><p>Nie. Możesz przesłać gotowy plik, ale możemy też zacząć od szkicu, zdjęcia, wymiarów lub istniejącego elementu.</p></details>
+        <details><summary>Czy wykonujecie pojedyncze sztuki?</summary><p>Tak. Realizujemy pojedyncze elementy, prototypy oraz krótkie serie.</p></details>
+        <details><summary>Czy możecie dobrać materiał?</summary><p>Tak. Materiał dobieramy do sposobu użycia, wymaganej wytrzymałości, temperatury pracy, wyglądu i budżetu.</p></details>
+        <details><summary>Czy można połączyć druk 3D z grawerowaniem?</summary><p>Tak. W zależności od projektu możemy łączyć kilka metod wykonania i przygotować kompletny detal lub zestaw.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="wycena">
+    <div class="wrap">
+      <div class="note reveal">
+        <div><strong>Masz pomysł, ale nie wiesz jak go wykonać?</strong><br><span>Wyślij opis, zdjęcie, szkic albo plik. Zaczniemy od bezpłatnej wyceny.</span></div>
         <a class="btn primary" href="mailto:kontakt@acre.pl">Wyceń projekt</a>
       </div>
     </div>
@@ -214,7 +183,8 @@
 </main>
 
 <footer id="kontakt">
-  <div class="wrap">ACRE / druk 3D / laser / projektowanie / wersja robocza strony</div>
+  <div class="wrap footer-grid"><span>ACRE / druk 3D / laser / projektowanie</span><span>Prototypy, personalizacja i krótkie serie</span></div>
 </footer>
+<script src="assets/app.js?v=2" defer></script>
 </body>
 </html>
