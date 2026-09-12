@@ -1,6 +1,8 @@
 name: Deploy ACRE to OVH
 
 on:
+  push:
+    branches: [production]
   workflow_dispatch:
 
 concurrency:
@@ -13,7 +15,9 @@ permissions:
 jobs:
   deploy:
     name: Deploy over SFTP
+    if: github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       SFTP_HOST: ftp.cluster121.hosting.ovh.net
       SFTP_PORT: "22"
@@ -64,6 +68,38 @@ jobs:
 
           bye
           LFTP
+
+      - name: Smoke tests on production
+        shell: bash
+        run: |
+          set -euo pipefail
+          base_url="https://acreworks.pl"
+          failed=0
+          check_status() {
+            local path="$1" expected="$2" actual attempt
+            for attempt in 1 2 3; do
+              actual="$(curl --silent --show-error --output /dev/null \
+                --write-out '%{http_code}' --connect-timeout 10 --max-time 30 \
+                --header 'Cache-Control: no-cache' \
+                "${base_url}${path}?smoke=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}")" || actual="transport-error"
+              if [ "$actual" = "$expected" ]; then
+                echo "PASS $path: HTTP $actual"
+                return 0
+              fi
+              echo "Attempt $attempt: $path expected $expected, received $actual"
+              if [ "$attempt" -lt 3 ]; then sleep 5; fi
+            done
+            echo "::error::$path expected HTTP $expected, received $actual"
+            failed=1
+          }
+          for path in / /druk-3d-na-zamowienie.html /grawerowanie-ciecie-laserowe.html \
+            /projektowanie-cad.html /dla-firm.html /wycena.html /technologia.html \
+            /druk-3d-dla-hobbystow.html /akcesoria-astronomiczne.html \
+            /polityka-prywatnosci.html /robots.txt /sitemap.xml; do
+            check_status "$path" 200
+          done
+          check_status "/__acre_smoke_missing_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.html" 404
+          if [ "$failed" -ne 0 ]; then exit 1; fi
 
       - name: Deployment completed
         run: echo "ACRE deployment to OVH completed successfully."
