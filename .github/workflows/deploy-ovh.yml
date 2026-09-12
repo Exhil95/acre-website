@@ -59,7 +59,7 @@ jobs:
           set sftp:auto-confirm yes
           set mirror:set-permissions no
 
-          mirror --reverse --verbose --parallel=4 \
+          mirror --reverse --overwrite --verbose --parallel=4 \
             --exclude-glob .git/ \
             --exclude-glob .git/** \
             --exclude-glob .github/ \
