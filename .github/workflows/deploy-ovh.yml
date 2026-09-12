@@ -95,7 +95,7 @@ jobs:
           for path in / /druk-3d-na-zamowienie.html /grawerowanie-ciecie-laserowe.html \
             /projektowanie-cad.html /dla-firm.html /wycena.html /technologia.html \
             /druk-3d-dla-hobbystow.html /akcesoria-astronomiczne.html \
-            /polityka-prywatnosci.html /robots.txt /sitemap.xml; do
+            /polityka-prywatnosci.html /realizacje.html /robots.txt /sitemap.xml; do
             check_status "$path" 200
           done
           check_status "/__acre_smoke_missing_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.html" 404

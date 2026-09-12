@@ -82,7 +82,8 @@
     'projektowanie-cad.html':'/projektowanie-cad.html',
     'dla-firm.html':'/dla-firm.html',
     'akcesoria-astronomiczne.html':'/akcesoria-astronomiczne.html',
-    'technologia.html':'/technologia.html'
+    'technologia.html':'/technologia.html',
+    'realizacje.html':'/realizacje.html'
   };
   const activeHref=activeMap[currentFile]||'';
 
@@ -94,7 +95,8 @@
       <a href="/projektowanie-cad.html">CAD</a>
       <a href="/dla-firm.html">Dla firm</a>
       <a href="/akcesoria-astronomiczne.html">ACRE / ASTRO</a>
-      <a href="/technologia.html">Technologia</a>`;
+      <a href="/technologia.html">Technologia</a>
+      <a href="/realizacje.html">Realizacje</a>`;
     navLinks.querySelectorAll('a').forEach(link=>{
       if(activeHref&&link.getAttribute('href')===activeHref){
         link.classList.add('is-active');
@@ -163,6 +165,7 @@
           <strong>Informacje</strong>
           <div class="footer-links">
             <a href="/">Strona główna</a>
+            <a href="/realizacje.html">Realizacje</a>
             <a href="/wycena.html">Wycena</a>
             <a href="/polityka-prywatnosci.html">Polityka prywatności</a>
             <a href="/polityka-prywatnosci.html#cookies">Pliki cookies</a>
