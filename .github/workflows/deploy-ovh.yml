@@ -14,27 +14,26 @@ jobs:
   deploy:
     name: Deploy over SFTP
     runs-on: ubuntu-latest
+    env:
+      SFTP_HOST: ftp.cluster121.hosting.ovh.net
+      SFTP_PORT: "22"
+      SFTP_USER: acrewog
+      SFTP_REMOTE_DIR: www
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate deployment secrets
+      - name: Validate deployment secret
         shell: bash
         env:
-          SFTP_HOST: ${{ secrets.SFTP_HOST }}
-          SFTP_PORT: ${{ secrets.SFTP_PORT }}
-          SFTP_USER: ${{ secrets.SFTP_USER }}
           SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
-          SFTP_REMOTE_DIR: ${{ secrets.SFTP_REMOTE_DIR }}
         run: |
           set -euo pipefail
-          for variable in SFTP_HOST SFTP_PORT SFTP_USER SFTP_PASSWORD SFTP_REMOTE_DIR; do
-            if [ -z "${!variable:-}" ]; then
-              echo "::error::$variable is not configured in GitHub Actions secrets."
-              exit 1
-            fi
-          done
+          if [ -z "${SFTP_PASSWORD:-}" ]; then
+            echo "::error::SFTP_PASSWORD is not configured in GitHub Actions secrets."
+            exit 1
+          fi
 
       - name: Install lftp
         shell: bash
@@ -45,11 +44,7 @@ jobs:
       - name: Upload website to OVH
         shell: bash
         env:
-          SFTP_HOST: ${{ secrets.SFTP_HOST }}
-          SFTP_PORT: ${{ secrets.SFTP_PORT }}
-          SFTP_USER: ${{ secrets.SFTP_USER }}
           SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
-          SFTP_REMOTE_DIR: ${{ secrets.SFTP_REMOTE_DIR }}
         run: |
           set -euo pipefail
 
